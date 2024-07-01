@@ -5,7 +5,8 @@ const axios = require("axios");
 
 function getClientIp(req) {
   return (
-    req.connection.remoteAddress || // Direct connection
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress
   );
@@ -69,21 +70,28 @@ async function getWeather(latitude, longitude) {
 const SERVER_PORT = process.env.PORT || 3000;
 app.get("/app/hello", async (req, res) => {
   const clientIp = getClientIp(req);
-  const visitorName = req.query.visitor_name || "anonymous";
-  const locationDetails = await getLocation(clientIp);
+  const visitorName = req.query.visitor_name;
+  if (!visitorName) {
+    res.status(400).json({
+      error: "query parameter visitor_name required",
+    });
+    return;
+  } else {
+    const locationDetails = await getLocation(clientIp);
 
-  const weatherDetails = await getWeather(
-    locationDetails.latitude,
-    locationDetails.longitude
-  );
+    const weatherDetails = await getWeather(
+      locationDetails.latitude,
+      locationDetails.longitude
+    );
 
-  const data = {
-    client_ip: locationDetails.ip,
-    location: locationDetails.city,
-    greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city}`,
-  };
+    const data = {
+      client_ip: locationDetails.ip,
+      location: locationDetails.city,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city}`,
+    };
 
-  res.status(200).json(data);
+    res.status(200).json(data);
+  }
 });
 
 app.listen(SERVER_PORT, () => {
