@@ -18,6 +18,11 @@ const OpenWeatherKey = process.env.OpenWeatherKey;
 
 const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`;
 
+/**
+ * 
+ * @param {*} ipAddress 
+ * @returns users location details based on there IP
+ */
 async function getLocation(ipAddress) {
   try {
     const response = await axios.get(url, {
@@ -34,6 +39,12 @@ async function getLocation(ipAddress) {
   }
 }
 
+/**
+ * 
+ * @param {*} latitude  
+ * @param {*} longitude 
+ * @returns weather infomation based on latitude and longitude
+ */
 async function getWeather(latitude, longitude) {
   try {
     const response = await axios.get(weatherUrl, {
@@ -41,7 +52,7 @@ async function getWeather(latitude, longitude) {
         lat: latitude,
         lon: longitude,
         appid: OpenWeatherKey,
-        units: "metric", // or 'imperial' for Fahrenheit
+        units: "metric", 
       },
     });
 
@@ -58,7 +69,7 @@ async function getWeather(latitude, longitude) {
 const SERVER_PORT = 3000;
 app.get("/app/hello", async (req, res) => {
   const clientIp = getClientIp(req);
-  const visitorName = req.query.visitor_name;
+  const visitorName = req.query.visitor_name || "anonymous";
   const locationDetails = await getLocation(clientIp);
 
   const weatherDetails = await getWeather(
