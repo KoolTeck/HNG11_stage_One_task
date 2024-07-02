@@ -10,7 +10,7 @@ if (proxyDepth > 0) {
     app.set('trust proxy', proxyDepth + 1);
 }
 function getClientIp(req) {
-  return req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
+  return req.header['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
 }
 
 const IpgeolocationKey = process.env.IpgeolocationKey;
