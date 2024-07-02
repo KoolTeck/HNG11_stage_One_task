@@ -4,7 +4,7 @@ const app = express();
 const axios = require("axios");
 
 function getClientIp(req) {
-  return req.ip || req.connection.remoteAddress;
+  return req.headers["x-real-ip"] || req.connection.remoteAddress;
 }
 
 const IpgeolocationKey = process.env.IpgeolocationKey;
