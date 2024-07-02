@@ -2,10 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const requestIp = require("request-ip");
+app.set('trust proxy', true);
 
 function getClientIp(req) {
-  return requestIp.getClientIp(req);
+  return req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
 }
 
 const IpgeolocationKey = process.env.IpgeolocationKey;
