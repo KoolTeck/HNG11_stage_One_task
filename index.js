@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const axios = require("axios");
+
 const proxyDepth = parseInt(process.env.ADAPTABLE_TRUST_PROXY_DEPTH, 10);
 if (proxyDepth > 0) {
     // 'trust proxy' is the number of IP addresses to trust in the
@@ -10,7 +11,7 @@ if (proxyDepth > 0) {
     app.set('trust proxy', proxyDepth + 1);
 }
 function getClientIp(req) {
-  return req.header['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
+  return req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
 }
 
 const IpgeolocationKey = process.env.IpgeolocationKey;
@@ -70,6 +71,12 @@ async function getWeather(latitude, longitude) {
 
 const SERVER_PORT = process.env.PORT || 3000;
 app.get("/app/hello", async (req, res) => {
+    console.log(
+    process.env.ADAPTABLE_TRUST_PROXY_DEPTH,
+    req.headers['x-forwarded-for'],
+    req.header['x-forwarded-for'],
+    req.headers['X-Forwarded-For']
+)
   const clientIp = getClientIp(req);
   const visitorName = req.query.visitor_name;
   if (!visitorName) {
