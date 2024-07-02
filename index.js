@@ -2,9 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const axios = require("axios");
+const requestIp = require("request-ip");
 
 function getClientIp(req) {
-  return req.headers["x-real-ip"] || req.connection.remoteAddress;
+  return requestIp.getClientIp(req);
 }
 
 const IpgeolocationKey = process.env.IpgeolocationKey;
