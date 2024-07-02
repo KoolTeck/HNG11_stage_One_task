@@ -2,8 +2,13 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const axios = require("axios");
-app.set('trust proxy', true);
-
+const proxyDepth = parseInt(process.env.ADAPTABLE_TRUST_PROXY_DEPTH, 10);
+if (proxyDepth > 0) {
+    // 'trust proxy' is the number of IP addresses to trust in the
+    // X-Forwarded-For header, so set to the number of proxies plus one for the
+    // client IP address.
+    app.set('trust proxy', proxyDepth + 1);
+}
 function getClientIp(req) {
   return req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
 }
