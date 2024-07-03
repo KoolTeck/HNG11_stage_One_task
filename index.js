@@ -3,7 +3,6 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 
-app.set("trust proxy", true);
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -19,8 +18,8 @@ if (proxyDepth > 0) {
 }
 function getClientIp(req) {
   return (
-    req.headers["x-forwarded-for"] || req.socket.remoteAddress || "8.8.8.8"
-  );
+    req.headers["x-forwarded-for"] || req.socket.remoteAddress || ""
+  ).split(',')[0].trim();
 }
 
 const IpgeolocationKey = process.env.IpgeolocationKey;
@@ -110,4 +109,3 @@ app.listen(SERVER_PORT, () => {
   console.log("app listening on port " + SERVER_PORT);
 });
 
-module.exports = app;
