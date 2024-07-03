@@ -93,10 +93,10 @@ console.log(clientIp);
       locationDetails.latitude,
       locationDetails.longitude
     );
-    console.log(weatherDetails);
+    console.log(clientIp, locationDetails,  weatherDetails);
 
     const data = {
-      client_ip: locationDetails.ip,
+      client_ip: clientIp,
       location: locationDetails.city,
       greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city} seems like ${weatherDetails.weatherDescription}`,
     };
