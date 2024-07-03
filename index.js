@@ -81,7 +81,7 @@ async function getWeather(latitude, longitude) {
 const SERVER_PORT = process.env.PORT || 3000;
 app.get("/app/hello", async (req, res) => {
   const clientIp = getClientIp(req);
-
+console.log(clientIp);
   const visitorName = req.query.visitor_name;
   if (!visitorName) {
     res.status(400).json({
