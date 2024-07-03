@@ -3,19 +3,8 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 
-const proxyDepth = parseInt(process.env.ADAPTABLE_TRUST_PROXY_DEPTH, 10);
-if (proxyDepth > 0) {
-    // 'trust proxy' is the number of IP addresses to trust in the
-    // X-Forwarded-For header, so set to the number of proxies plus one for the
-    // client IP address.
-    app.set('trust proxy', proxyDepth + 1);
-}
-function getClientIp(req) {
-  return req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
-}
-
-const IpgeolocationKey = process.env.IpgeolocationKey;
-const url = `https://api.ipgeolocation.io/ipgeo`;
+// const IpgeolocationKey = process.env.IpgeolocationKey;
+// const url = `https://api.ipgeolocation.io/ipgeo`;
 
 const OpenWeatherKey = process.env.OpenWeatherKey;
 
@@ -26,16 +15,9 @@ const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`;
  * @param {*} ipAddress
  * @returns users location details based on there IP
  */
-async function getLocation(ipAddress) {
+async function getLocation() {
   try {
-    const response = await axios.get(url, {
-      params: {
-        apiKey: IpgeolocationKey,
-        ipAddress: ipAddress,
-        fields: "geo",
-      },
-    });
-
+    const response = await axios.get(`http://ip-api.com/json/`);
     return response.data;
   } catch (error) {
     console.error("Error fetching location and weather:", error);
@@ -69,15 +51,11 @@ async function getWeather(latitude, longitude) {
   }
 }
 
+app.set("trust proxy", true);
 const SERVER_PORT = process.env.PORT || 3000;
 app.get("/app/hello", async (req, res) => {
-    console.log(
-    process.env.ADAPTABLE_TRUST_PROXY_DEPTH,
-    req.headers['x-forwarded-for'],
-    req.header['x-forwarded-for'],
-    req.headers['X-Forwarded-For']
-)
-  const clientIp = getClientIp(req);
+  // const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  // console.log(clientIp);
   const visitorName = req.query.visitor_name;
   if (!visitorName) {
     res.status(400).json({
@@ -85,17 +63,19 @@ app.get("/app/hello", async (req, res) => {
     });
     return;
   } else {
-    const locationDetails = await getLocation(clientIp);
+    const locationDetails = await getLocation();
+    console.log(locationDetails);
 
     const weatherDetails = await getWeather(
-      locationDetails.latitude,
-      locationDetails.longitude
+      locationDetails.lat,
+      locationDetails.lon
     );
+    console.log(weatherDetails);
 
     const data = {
-      client_ip: locationDetails.ip,
+      client_ip: locationDetails.query,
       location: locationDetails.city,
-      greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city}`,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city} which is ${weatherDetails.weatherDescription}`,
     };
 
     res.status(200).json(data);
