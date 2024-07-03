@@ -34,7 +34,8 @@ const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`;
  * @param {*} ipAddress
  * @returns users location details based on there IP
  */
-async function getLocation(ipAddress) {
+async function getLocation(ipAddress) { 
+  console.log(ipAddress);
   try {
     const response = await axios.get(url, {
       params: {
