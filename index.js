@@ -22,9 +22,6 @@ function getClientIp(req) {
   ).split(',')[0].trim();
 }
 
-const IpgeolocationKey = process.env.IpgeolocationKey;
-const url = `https://api.ipgeolocation.io/ipgeo`;
-
 const OpenWeatherKey = process.env.OpenWeatherKey;
 
 const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`;
@@ -35,7 +32,6 @@ const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`;
  * @returns users location details based on there IP
  */
 async function getLocation(ipAddress) { 
-  console.log(ipAddress);
   try {
     const response = await axios.get(`http://ip-api.com/json/${ipAddress}`);
 
@@ -87,8 +83,6 @@ app.get("/app/hello", async (req, res) => {
       locationDetails.lat,
       locationDetails.lon
     );
-    console.log(locationDetails,  weatherDetails);
-
     const data = {
       client_ip: clientIp,
       location: locationDetails.city,
