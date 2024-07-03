@@ -37,13 +37,7 @@ const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`;
 async function getLocation(ipAddress) { 
   console.log(ipAddress);
   try {
-    const response = await axios.get(url, {
-      params: {
-        apiKey: IpgeolocationKey,
-        ipAddress: ipAddress,
-        fields: "geo",
-      },
-    });
+    const response = await axios.get(`http://ip-api.com/json/${ipAddress}`);
 
     return response.data;
   } catch (error) {
@@ -90,8 +84,8 @@ app.get("/app/hello", async (req, res) => {
   } else {
     const locationDetails = await getLocation(clientIp);
     const weatherDetails = await getWeather(
-      locationDetails.latitude,
-      locationDetails.longitude
+      locationDetails.lat,
+      locationDetails.lon
     );
     console.log(locationDetails,  weatherDetails);
 
