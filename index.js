@@ -3,15 +3,6 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
-
 const proxyDepth = parseInt(process.env.ADAPTABLE_TRUST_PROXY_DEPTH, 10);
 if (proxyDepth > 0) {
   app.set("trust proxy", proxyDepth + 1);
@@ -86,7 +77,7 @@ app.get("/app/hello", async (req, res) => {
     const data = {
       client_ip: clientIp,
       location: locationDetails.city,
-      greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city} seems like ${weatherDetails.weatherDescription}`,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherDetails.temperature} degrees Celcius in ${locationDetails.city}`,
     };
 
     res.status(200).json(data);
